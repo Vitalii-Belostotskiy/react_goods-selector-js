@@ -1,6 +1,7 @@
 import 'bulma/css/bulma.css';
 import './App.scss';
 import { useState } from 'react';
+import cn from 'classnames';
 
 export const goods = [
   'Dumplings',
@@ -16,66 +17,68 @@ export const goods = [
 ];
 
 export const App = () => {
-  const [good, setGood] = useState('Jam');
+  const [selectedGood, setSelectedGood] = useState('Jam');
+
+  function resetStates() {
+    return setSelectedGood('');
+  }
 
   return (
     <main className="section container">
-      {!good ? (
+      {!selectedGood ? (
         <h1 className="title is-flex is-align-items-center">
           No goods selected
         </h1>
       ) : (
         <h1 className="title is-flex is-align-items-center">
-          {good} is selected
+          {selectedGood} is selected
           <button
             data-cy="ClearButton"
             type="button"
             className="delete ml-3"
-            onClick={() => {
-              setGood('');
-            }}
+            onClick={resetStates}
           />
         </h1>
       )}
 
       <table className="table">
         <tbody>
-          {goods.map(food => (
-            <tr
-              data-cy="Good"
-              className={`${good === food && 'has-background-success-light'}`}
-            >
-              <td>
-                {good === food ? (
-                  <button
-                    data-cy="RemoveButton"
-                    type="button"
-                    className="button is-info"
-                    onClick={() => {
-                      setGood('');
-                    }}
-                  >
-                    -
-                  </button>
-                ) : (
-                  <button
-                    data-cy="AddButton"
-                    type="button"
-                    className="button"
-                    onClick={() => {
-                      setGood(food);
-                    }}
-                  >
-                    +
-                  </button>
-                )}
-              </td>
+          {goods.map(good => {
+            const goodIsIquals = good === selectedGood;
 
-              <td data-cy="GoodTitle" className="is-vcentered">
-                {food}
-              </td>
-            </tr>
-          ))}
+            return (
+              <tr
+                data-cy="Good"
+                className={cn({ 'has-background-success-light': goodIsIquals })}
+              >
+                <td>
+                  {goodIsIquals ? (
+                    <button
+                      data-cy="RemoveButton"
+                      type="button"
+                      className="button is-info"
+                      onClick={resetStates}
+                    >
+                      -
+                    </button>
+                  ) : (
+                    <button
+                      data-cy="AddButton"
+                      type="button"
+                      className="button"
+                      onClick={() => setSelectedGood(good)}
+                    >
+                      +
+                    </button>
+                  )}
+                </td>
+
+                <td data-cy="GoodTitle" className="is-vcentered">
+                  {good}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </main>
